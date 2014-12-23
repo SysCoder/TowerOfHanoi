@@ -8,8 +8,8 @@ var BALL_DIAMETER = 40,
 var Q = Quintus()
         .include("Sprites, Scenes, Input, 2D, Touch, UI")
         .setup({ 
-          width:   WIDTH, // Set the default width to 800 pixels
-          height:  HEIGHT // Set the default height to 600 pixels
+          width:   WIDTH,
+          height:  HEIGHT
         })
         .controls().touch();
 
@@ -64,36 +64,11 @@ Q.Sprite.extend("Player",{
   }
 });
 
-//Q.scene("balls", function (stage) {
-  //stage.insert(new Q.Player({Color: "red"}));
-//});
-
 Q.scene("backdrop",function(stage) {
   stage.insert(new Q.Player({Color: "red"}));
-  /*for(var loc = HEIGHT; loc >= BALL_DIAMETER; loc -= BALL_DIAMETER){ //render horizontal lines
-    console.log('rendering line at ', loc);
-    stage.insert(getLineObject(0, loc, WIDTH * 2, LINE_THICKNESS));
-  }
-  
-  for(var loc = WIDTH; loc >= 0; loc -= BALL_DIAMETER){
-    console.log('rendering line at ', loc);
-    stage.insert(getLineObject(loc, 0, LINE_THICKNESS, HEIGHT * 2));
-  }*/
   
   stage.insert(getLineObject(0, HEIGHT, WIDTH, LINE_THICKNESS));
   //stage.insert(new Q.Tower({ x: 180, y: 50 })) // WTF?  This throws an error
-  
-  /*var sprite2 = new Q.Sprite({ x:0, y: GRID_BOTTOM, w: GRID_DIMS, h: 10 });
-  sprite2.draw= function(ctx) {
-    ctx.fillStyle = 'black';
-    ctx.fillRect(-this.p.cx,-this.p.cy,this.p.w,this.p.h);
-  };
- 
-  //stage.add("viewport").follow(player);
-  //Here we should render out the grid completely
-  stage.insert(sprite2);*/
-  
-  //stage.insert(new Q.Tower({ x: 180, y: 50 }));
 });
 
 Q.scene('endGame',function(stage) {
