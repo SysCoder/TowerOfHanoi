@@ -37,7 +37,7 @@ Q.Sprite.extend("Player",{
     Q.input.off("right", this);
   },
   moveRight: function() {
-    if (this.p.x + (BALL_DIAMETER) < (BALL_DIAMETER + LINE_THICKNESS) * 7) {
+    if (this.p.x + (BALL_DIAMETER) < (BALL_DIAMETER + LINE_THICKNESS) * 6) {
      	this.p.x = this.p.x + (BALL_DIAMETER);
     }
   },
@@ -76,9 +76,9 @@ Q.scene("Slots",function(stage) {
   var x = 0;
   //var y = 560 - LINE_THICKNESS + 3;
   var y = HEIGHT - height;
-  for (var i = 0; i <= 7; i++)
+  for (var i = 0; i < 7; i++)
   {
-    for (var j = 0; j <= 6; j++)
+    for (var j = 0; j < 6; j++)
     {
       stage.insert(new Q.Slot({Color: "red", x: x + BALL_DIAMETER * i, y: y - BALL_DIAMETER *j}));
     }
