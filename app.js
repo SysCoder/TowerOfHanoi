@@ -3,7 +3,7 @@ var BALL_DIAMETER = 40,
     GRID_TOP = 90,
     LINE_THICKNESS = 5,
     WIDTH = 500,
-    HEIGHT = 400;
+    HEIGHT = 350;
 
 var Q = Quintus()
         .include("Sprites, Scenes, Input, 2D, Touch, UI")
@@ -62,12 +62,9 @@ Q.scene("backdrop",function(stage) {
 });
 
 function getLineObject (x, y, w, h){
-  var line = new Q.Sprite({ x:x, y:y, w:w, h:h});
+  var line = new Q.Sprite({ x:x, y:y, w:w * 2, h:h});
   console.log('drawing line with width of ', w, 'px and height of ', h ,'px');
-  line.draw = function (context) {
-    context.fillStyle = 'black';
-    context.fillRect(-this.p.cx,-this.p.cy,this.p.w,this.p.h);
-  }
+  
   return line;
 }
 
