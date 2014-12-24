@@ -16,7 +16,7 @@ var Q = Quintus()
 Q.Sprite.extend("Player",{
   init: function(p) {
     console.log('Player init');
-    this._super(p, { sheet: "player", vy:0, x: BALL_DIAMETER + BALL_DIAMETER/2 , y: (BALL_DIAMETER / 2), w: BALL_DIAMETER, h: BALL_DIAMETER, color: 'black' });
+    this._super(p, { sheet: "player", vy:0, x: BALL_DIAMETER/2 , y: (BALL_DIAMETER / 2), w: BALL_DIAMETER, h: BALL_DIAMETER, color: 'black' });
     
     
     this.on("hit.sprite",function(collision) {
@@ -37,12 +37,14 @@ Q.Sprite.extend("Player",{
     Q.input.off("right", this);
   },
   moveRight: function() {
-   	this.p.x = this.p.x + (BALL_DIAMETER);
-    Q.input.off("down", this, "moveRight");
+    if (this.p.x + (BALL_DIAMETER) < (BALL_DIAMETER + LINE_THICKNESS) * 7) {
+     	this.p.x = this.p.x + (BALL_DIAMETER);
+    }
   },
   moveLeft: function() {
-    this.p.x = this.p.x - (BALL_DIAMETER);
-    Q.input.off("down", this, "moveLeft");
+    if (this.p.x - (BALL_DIAMETER) > 0) {
+      this.p.x = this.p.x - (BALL_DIAMETER);
+    }
   },
   draw: function(ctx) {
     ctx.fillStyle = this.p.color;
