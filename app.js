@@ -41,7 +41,7 @@ Q.Sprite.extend("Player",{
   },
   newPiece: function() {
     this.add('2d');
-    Q.stage().insert(new Q.Player({color: this.p.color == "yellow" ? "red" : "yellow"}));
+    Q.stage().insert(new Q.Player({color: this.p.color == "yellow" ? "red" : "yellow", x: this.p.x}));
     Q.input.off("down", this);
     Q.input.off("left", this);
     Q.input.off("right", this);
@@ -94,18 +94,12 @@ Q.Sprite.extend("Slot",{
   },
 
   draw: function(ctx) {
-    //ctx.moveTo(20, 20);
-    //ctx.lineTo(100, 20);
     var inMemoryCanvas = document.createElement('canvas');
     inMemoryCanvasCtx = inMemoryCanvas.getContext("2d");
 
     inMemoryCanvasCtx.fillStyle = "orange";
-    //context.strokeRect(20,20,30,50);
     inMemoryCanvasCtx.fillRect(0,0,40,40);
-
     inMemoryCanvasCtx.globalCompositeOperation = 'destination-out';
-
-    //inMemoryCanvasCtx.fillStyle = "#999";
     inMemoryCanvasCtx.beginPath();
     inMemoryCanvasCtx.arc(20,20,17,0,2*Math.PI);
     inMemoryCanvasCtx.fill();
