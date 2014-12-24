@@ -79,7 +79,7 @@ Q.scene("backdrop",function(stage) {
 });
 
 function getLineObject (x, y, w, h){
-  var line = new Q.Sprite({ x:x, y:y, w:w * 2, h:h});
+  var line = new Q.Sprite({ x:x, y:y, w:w * 2, h:h + 5});
   console.log('drawing line with width of ', w, 'px and height of ', h ,'px');
   
   return line;
