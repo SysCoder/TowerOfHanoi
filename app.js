@@ -26,7 +26,7 @@ function getLineObject (x, y, w, h){
 Q.Sprite.extend("Player",{
   init: function(p) {
     console.log('Player init');
-    this._super(p, { sheet: "player", vy:0, x: (WIDTH / 4), y: (BALL_DIAMETER / 2), w: BALL_DIAMETER, h: BALL_DIAMETER, color: 'black' });
+    this._super(p, { sheet: "player", vy:0, x: BALL_DIAMETER + BALL_DIAMETER/2 , y: (BALL_DIAMETER / 2), w: BALL_DIAMETER, h: BALL_DIAMETER, color: 'black' });
     
     
     this.on("hit.sprite",function(collision) {
@@ -47,11 +47,11 @@ Q.Sprite.extend("Player",{
     Q.input.off("right", this);
   },
   moveRight: function() {
-   	this.p.x = this.p.x + (BALL_DIAMETER + LINE_THICKNESS);
+   	this.p.x = this.p.x + (BALL_DIAMETER);
     Q.input.off("down", this, "moveRight");
   },
   moveLeft: function() {
-    this.p.x = this.p.x - (BALL_DIAMETER + LINE_THICKNESS);
+    this.p.x = this.p.x - (BALL_DIAMETER);
     Q.input.off("down", this, "moveLeft");
   },
   draw: function(ctx) {
@@ -69,6 +69,49 @@ Q.scene("backdrop",function(stage) {
   
   stage.insert(getLineObject(0, HEIGHT, WIDTH, LINE_THICKNESS));
   //stage.insert(new Q.Tower({ x: 180, y: 50 })) // WTF?  This throws an error
+});
+
+Q.scene("Slots",function(stage) {
+  var width = BALL_DIAMETER + LINE_THICKNESS;
+  var height = BALL_DIAMETER + LINE_THICKNESS;
+  var x = 0;
+  var y = 560 - LINE_THICKNESS + 3;
+  for (var i = 0; i <= 7; i++)
+  {
+    for (var j = 0; j <= 6; j++)
+    {
+      stage.insert(new Q.Slot({Color: "red", x: x + BALL_DIAMETER * i, y: y - BALL_DIAMETER *j}));
+    }
+  }
+  
+});
+
+Q.Sprite.extend("Slot",{
+  init: function(p) {
+    console.log('Player init');
+    this._super(p, { sheet: "player", vy:0, x: (WIDTH / 4), y: (BALL_DIAMETER / 2), w: BALL_DIAMETER, h: BALL_DIAMETER, color: 'black' });
+    
+  },
+
+  draw: function(ctx) {
+    //ctx.moveTo(20, 20);
+    //ctx.lineTo(100, 20);
+    var inMemoryCanvas = document.createElement('canvas');
+    inMemoryCanvasCtx = inMemoryCanvas.getContext("2d");
+
+    inMemoryCanvasCtx.fillStyle = "orange";
+    //context.strokeRect(20,20,30,50);
+    inMemoryCanvasCtx.fillRect(0,0,40,40);
+
+    inMemoryCanvasCtx.globalCompositeOperation = 'destination-out';
+
+    //inMemoryCanvasCtx.fillStyle = "#999";
+    inMemoryCanvasCtx.beginPath();
+    inMemoryCanvasCtx.arc(20,20,17,0,2*Math.PI);
+    inMemoryCanvasCtx.fill();
+    
+    ctx.drawImage(inMemoryCanvas, 0, 0);
+  }
 });
 
 Q.scene('endGame',function(stage) {
@@ -89,4 +132,5 @@ Q.scene('endGame',function(stage) {
 
 Q.load("sprites.png", function() {
   Q.stageScene("backdrop");
+  Q.stageScene("Slots",1);
 });
