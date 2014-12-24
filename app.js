@@ -75,7 +75,8 @@ Q.scene("Slots",function(stage) {
   var width = BALL_DIAMETER + LINE_THICKNESS;
   var height = BALL_DIAMETER + LINE_THICKNESS;
   var x = 0;
-  var y = 560 - LINE_THICKNESS + 3;
+  //var y = 560 - LINE_THICKNESS + 3;
+  var y = HEIGHT - height;
   for (var i = 0; i <= 7; i++)
   {
     for (var j = 0; j <= 6; j++)
