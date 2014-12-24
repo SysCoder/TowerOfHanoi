@@ -65,7 +65,7 @@ Q.Sprite.extend("Player",{
 });
 
 Q.scene("backdrop",function(stage) {
-  stage.insert(new Q.Player({Color: "red"}));
+  stage.insert(new Q.Player({color: "red"}));
   
   stage.insert(getLineObject(0, HEIGHT, WIDTH, LINE_THICKNESS));
   //stage.insert(new Q.Tower({ x: 180, y: 50 })) // WTF?  This throws an error
