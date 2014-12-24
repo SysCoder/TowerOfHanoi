@@ -40,14 +40,21 @@ Q.Sprite.extend("Player",{
     Q.input.on("left", this, "moveLeft");    
   },
   newPiece: function() {
+   attemptToDropPiece = dropPieceInColumn(this.p.position, this.p.color == "yellow" ? 1 : 2, gameState);
+   
+    if(attemptToDropPiece === undefined) {
+     return;
+    } else if (attemptToDropPiece) {
+        Q.stageScene("endGame", 1, { label: this.p.color.toUpperCase() + " Won!" });
+    }
+   
+   
     this.add('2d');
     Q.stage().insert(new Q.Player({color: this.p.color == "yellow" ? "red" : "yellow", x: this.p.x, position: this.p.position}));
     Q.input.off("down", this);
     Q.input.off("left", this);
     Q.input.off("right", this);
-    if(dropPieceInColumn(this.p.position, this.p.color == "yellow" ? 1 : 2, gameState)) {
-       Q.stageScene("endGame",1, { label: this.p.color.toUpperCase() + " Won!" });
-   }
+    
   },
   moveRight: function() {
     if (this.p.x + (BALL_DIAMETER) < (BALL_DIAMETER + LINE_THICKNESS) * 6) {
