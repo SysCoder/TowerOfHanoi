@@ -14,6 +14,8 @@ var gameState =
    [0, 0, 0, 0, 0, 0],
    [0, 0, 0, 0, 0, 0],
   ];
+   
+var gameEnded = false;
 
 var Q = Quintus()
         .include("Sprites, Scenes, Input, 2D, Touch, UI")
@@ -42,9 +44,10 @@ Q.Sprite.extend("Player",{
   newPiece: function() {
    attemptToDropPiece = dropPieceInColumn(this.p.position, this.p.color == "yellow" ? 1 : 2, gameState);
    
-    if(attemptToDropPiece === undefined) {
+    if(attemptToDropPiece === undefined || gameEnded) {
      return;
     } else if (attemptToDropPiece) {
+       gameEnded = true;
         Q.stageScene("endGame", 2, { label: this.p.color.toUpperCase() + " Won!" });
     }
     
@@ -137,6 +140,7 @@ Q.scene('endGame',function(stage) {
   var label = box.insert(new Q.UI.Text({x:10, y: -10 - button.p.h, 
                                         label: stage.options.label }));
   button.on("click",function() {
+   gameEnded = false;
     Q.clearStages();
     Q.stageScene('backdrop');
     Q.stageScene("Slots",1);
