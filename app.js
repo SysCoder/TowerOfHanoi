@@ -2,8 +2,8 @@ var BALL_DIAMETER = 40,
     GRID_BOTTOM = 400,
     GRID_TOP = 90,
     LINE_THICKNESS = 5,
-    WIDTH = 800,
-    HEIGHT = 600;
+    WIDTH = 500,
+    HEIGHT = 400;
 
 var Q = Quintus()
         .include("Sprites, Scenes, Input, 2D, Touch, UI")
