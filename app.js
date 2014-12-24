@@ -45,10 +45,9 @@ Q.Sprite.extend("Player",{
     if(attemptToDropPiece === undefined) {
      return;
     } else if (attemptToDropPiece) {
-        Q.stageScene("endGame", 1, { label: this.p.color.toUpperCase() + " Won!" });
+        Q.stageScene("endGame", 2, { label: this.p.color.toUpperCase() + " Won!" });
     }
-   
-   
+    
     this.add('2d');
     Q.stage().insert(new Q.Player({color: this.p.color == "yellow" ? "red" : "yellow", x: this.p.x, position: this.p.position}));
     Q.input.off("down", this);
