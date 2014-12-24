@@ -12,16 +12,6 @@ var Q = Quintus()
           height:  HEIGHT
         })
         .controls().touch();
-
-function getLineObject (x, y, w, h){
-  var line = new Q.Sprite({ x:x, y:y, w:w, h:h});
-  console.log('drawing line with width of ', w, 'px and height of ', h ,'px');
-  line.draw = function (context) {
-    context.fillStyle = 'black';
-    context.fillRect(-this.p.cx,-this.p.cy,this.p.w,this.p.h);
-  }
-  return line;
-}
         
 Q.Sprite.extend("Player",{
   init: function(p) {
@@ -70,6 +60,16 @@ Q.scene("backdrop",function(stage) {
   stage.insert(getLineObject(0, HEIGHT, WIDTH, LINE_THICKNESS));
   //stage.insert(new Q.Tower({ x: 180, y: 50 })) // WTF?  This throws an error
 });
+
+function getLineObject (x, y, w, h){
+  var line = new Q.Sprite({ x:x, y:y, w:w, h:h});
+  console.log('drawing line with width of ', w, 'px and height of ', h ,'px');
+  line.draw = function (context) {
+    context.fillStyle = 'black';
+    context.fillRect(-this.p.cx,-this.p.cy,this.p.w,this.p.h);
+  }
+  return line;
+}
 
 Q.scene("Slots",function(stage) {
   var width = BALL_DIAMETER + LINE_THICKNESS;
