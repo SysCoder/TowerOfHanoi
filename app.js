@@ -42,6 +42,7 @@ Q.Sprite.extend("Player",{
        setTimeout(function () {self.computerMove()}, 1000);
     } else {
      Q.input.on("down", this, "newPiece");
+     Q.input.on("fire", this, "newPiece");
      Q.input.on("right", this, "moveRight");
      Q.input.on("left", this, "moveLeft");    
      Q.input.on("up", this, "computerMove"); 
@@ -81,6 +82,7 @@ Q.Sprite.extend("Player",{
     this.add('2d');
     Q.stage().insert(new Q.Player({color: this.p.color == "yellow" ? "red" : "yellow", x: this.p.x, position: this.p.position}));
     Q.input.off("down", this);
+    Q.input.off("fire", this, "newPiece");
     Q.input.off("left", this);
     Q.input.off("right", this);
     Q.input.off("up", this);
