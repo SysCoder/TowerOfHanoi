@@ -37,18 +37,45 @@ Q.Sprite.extend("Player",{
         this.destroy();
       }
     });
-    Q.input.on("down", this, "newPiece");
-    Q.input.on("right", this, "moveRight");
-    Q.input.on("left", this, "moveLeft");    
+    if (this.p.color === "yellow") {
+       var self = this;
+       setTimeout(function () {self.computerMove()}, 1000);
+    } else {
+     Q.input.on("down", this, "newPiece");
+     Q.input.on("right", this, "moveRight");
+     Q.input.on("left", this, "moveLeft");    
+     Q.input.on("up", this, "computerMove"); 
+   }
+    
+  },
+  computerMove: function() {
+    this.p.position  = nextMove(gameState, this.p.color == "red" ? 1 : 2);
+   console.log("The position that the computer chose: " + this.p.position);
+   var attemptToDropPiece = dropPieceInColumn(this.p.position, this.p.color == "red" ? 1 : 2, gameState);
+   
+   if(attemptToDropPiece === undefined || gameEnded) {
+     return;
+    } else if (attemptToDropPiece) {
+       gameEnded = true;
+       Q.stageScene("endGame", 2, { label: "Computer Won!" });
+    }
+    //this.p.position  = 5;
+    this.p.x = (BALL_DIAMETER / 2) + this.p.position  * BALL_DIAMETER;
+    this.add('2d');
+   Q.stage().insert(new Q.Player({color: this.p.color == "yellow" ? "red" : "yellow", x: this.p.x, position: this.p.position}));
+    Q.input.off("down", this);
+    Q.input.off("left", this);
+    Q.input.off("right", this);
+   Q.input.off("up", this);
   },
   newPiece: function() {
-   attemptToDropPiece = dropPieceInColumn(this.p.position, this.p.color == "yellow" ? 1 : 2, gameState);
+   attemptToDropPiece = dropPieceInColumn(this.p.position, this.p.color == "red" ? 1 : 2, gameState);
    
     if(attemptToDropPiece === undefined || gameEnded) {
      return;
     } else if (attemptToDropPiece) {
        gameEnded = true;
-        Q.stageScene("endGame", 2, { label: this.p.color.toUpperCase() + " Won!" });
+       Q.stageScene("endGame", 2, { label: this.p.color.toUpperCase() + " Won!" });
     }
     
     this.add('2d');
@@ -56,7 +83,7 @@ Q.Sprite.extend("Player",{
     Q.input.off("down", this);
     Q.input.off("left", this);
     Q.input.off("right", this);
-    
+    Q.input.off("up", this);
   },
   moveRight: function() {
     if (this.p.x + (BALL_DIAMETER) < (BALL_DIAMETER + LINE_THICKNESS) * 6) {
@@ -162,11 +189,121 @@ Q.load("sprites.png", function() {
   Q.stageScene("Slots",1);
 });
 
-
-
-
 // Game Engine
+function nextMove(gameState, player) {
+  console.log('==============Looking for move ============');
+  var moves = availableMoves(gameState);
+  var otherPlayer = player === 1 ? 2 : 1;
+  console.log("The number of moves: " + moves.length)
+  var maxMove = -1;
+  var maxValue = -100;
+  var minMove = -1;
+  var minValue = 100;
+  
+  for (var i = 0;i < moves.length;i++) {
+    var newGameState = createNewGameState(moves[i], player, gameState);
+    var moveValue = minMaxAlg(newGameState, moves[i], otherPlayer, 5);
+    
+    if (moveValue > maxValue) {
+      maxValue = moveValue;
+      maxMove = moves[i];
+    }
 
+    if (moveValue < minValue) {
+      minValue = moveValue;
+      minMove = moves[i];
+    }
+    
+  }
+  //printGameState(gameState);
+  if (player == 1) {
+    console.log("!!!!Grand Max value: " + maxValue);
+    console.log("!!!!Grand Max move: " + maxMove);
+    return maxMove;
+  } else {
+    console.log("!!!!Grand Min value: " + minValue);
+    console.log("!!!!Grand Min move: " + minMove);
+    return minMove;
+  }
+}
+
+function minMaxAlg(gameStateInMethod, lastMove, player, depthToGo) {
+  if (depthToGo === 3) {
+    //printGameState(gameStateInMethod);
+    //console.log("$$$$$$$$$$$$$$$4");
+  }
+  var row = lowestAvailablePositionInColumn(lastMove, gameStateInMethod);
+  
+  // If this iteration is given a winning position, then the other player
+  // has won.
+  if (isSlotPartOfWinningPosition(gameStateInMethod, lastMove, row - 1)) {
+    return player == 1 ? -1 : 1;
+  }
+  if (depthToGo === 0) {
+    return 0;
+  }
+  var moves = availableMoves(gameStateInMethod);
+  var otherPlayer = player === 1 ? 2 : 1;
+
+  var maxMove = -1;
+  var maxValue = -100;
+  var minMove = -1;
+  var minValue = 100;
+  
+  
+  for (var i = 0;i < moves.length;i++) {
+    var newGameState = createNewGameState(moves[i], player, gameStateInMethod);
+    var moveValue = minMaxAlg(newGameState, moves[i], otherPlayer, depthToGo - 1);
+    if (depthToGo === 5) {
+      //console.log("Move value: " + moveValue);
+      //printGameState(newGameState);
+      //console.log("$$$$$$$$$$$$$$$$$$$$$");
+    }
+    
+    if (moveValue > maxValue) {
+      maxValue = moveValue;
+      maxMove = moves[i];
+    }
+
+    if (moveValue < minValue) {
+      minValue = moveValue;
+      minMove = moves[i];
+    }
+  }
+  if (player == 1) {
+    if (depthToGo === 5) {
+      //console.log("Max value: " + maxValue);
+      //console.log("Max move: " + maxMove);
+    }
+    return maxValue;
+  } else {
+    if (depthToGo === 5) {
+      //console.log("Min value: " + maxValue);
+      //console.log("Min move: " + minMove);
+    }
+    return minValue;
+  }
+}
+
+function createNewGameState(move, player, gameState) {
+  var newGameState = [];
+  
+  for (var i = 0;i < gameState.length;i++) {
+    newGameState[newGameState.length] = gameState[i].slice(0);
+  }
+  dropPieceInColumn(move, player, newGameState);
+  return newGameState;
+}
+
+function availableMoves(gameState) {
+  var moves = [];
+  for(var i = 0;i < 7;i++) {
+    if (gameState[i][gameState[i].length - 1] === 0) {
+      moves[moves.length] = i;
+    }
+  }
+  return moves;
+}
 
 function dropPieceInColumn(column, piece, gameState) {
   var availableRow = lowestAvailablePositionInColumn(column, gameState);
@@ -187,7 +324,7 @@ function lowestAvailablePositionInColumn(column, gameState) {
       return i + 1;
     }
   }
-  
+  //printGameState(gameState);
   return 0;
 }
 
@@ -196,30 +333,30 @@ function isSlotPartOfWinningPosition(gameState, column, row) {
     return false;
   }
   // horizontal check
-  sumLeft = searchForPieces(column - 1, row, 0, -1, gameState[column][row], gameState, 0);
-  sumRight = searchForPieces(column + 1, row, 0, 1, gameState[column][row], gameState, 0);
+  var sumLeft = searchForPieces(column - 1, row, 0, -1, gameState[column][row], gameState, 0);
+  var sumRight = searchForPieces(column + 1, row, 0, 1, gameState[column][row], gameState, 0);
   if (sumLeft + sumRight >= 3) {
     return true;
   }
   
   // positive diagonal check
-  sumDown = searchForPieces(column, row - 1, -1, 0, gameState[column][row], gameState, 0);
-  sumUp = searchForPieces(column, row + 1, 1, 0, gameState[column][row], gameState, 0);
+  var sumDown = searchForPieces(column, row - 1, -1, 0, gameState[column][row], gameState, 0);
+  var sumUp = searchForPieces(column, row + 1, 1, 0, gameState[column][row], gameState, 0);
   if (sumDown + sumUp >= 3) {
     return true;
   }
   
   // negative diagonal check
-  sumLeftUp = searchForPieces(column - 1, row + 1, 1, -1, gameState[column][row], gameState, 0);
-  sumRightDown = searchForPieces(column + 1, row - 1, -1, 1, gameState[column][row], gameState, 0);
+  var sumLeftUp = searchForPieces(column - 1, row + 1, 1, -1, gameState[column][row], gameState, 0);
+  var sumRightDown = searchForPieces(column + 1, row - 1, -1, 1, gameState[column][row], gameState, 0);
   if (sumLeftUp + sumRightDown >= 3) {
     return true;
   }
     
   // vertical check
   
-  sumUpRight = searchForPieces(column + 1, row + 1, 1, 1, gameState[column][row], gameState, 0);
-  sumDownLeft = searchForPieces(column - 1, row - 1, -1, -1, gameState[column][row], gameState, 0);
+  var sumUpRight = searchForPieces(column + 1, row + 1, 1, 1, gameState[column][row], gameState, 0);
+  var sumDownLeft = searchForPieces(column - 1, row - 1, -1, -1, gameState[column][row], gameState, 0);
   if (sumUpRight + sumDownLeft >= 3) {
     return true;
   }
@@ -239,7 +376,7 @@ function searchForPieces(column, row, rise, run, piece, gameState, count) {
 }
 
 function printGameState(gameState) {
-  console.log("**********************")
+  //console.log("**********************")
   for(var i = 0;i < gameState.length;i++) {
     console.log(gameState[i]);
   }
