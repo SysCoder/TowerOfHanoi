@@ -84,19 +84,37 @@ Q.Sprite.extend("UnderHover", {
     this._super(p, { x: 100, y: 50, w:100 * 2, h:20, color: "black"});
     this.p.y += this.p.w + 50;
     this.addKeyListeners();
+    this.position = 0;
+  },
+  
+  moveUp: function(p) {
+    // Alread holding a piece
+    if(activeRing !== undefined) {
+      return;
+    }
+    this.del('2d');
+    this.p.y = 50;
+    this.addKeyListeners();
   },
   
   moveRight: function(p) {
-    this.p.x += 250;
+    if (this.position < 2) {
+      this.p.x += 250;
+      this.position += 1;
+    }
   },
   
   moveLeft: function(p) {
-    this.p.x -= 250;
+    if (this.position > 0) {
+      this.p.x -= 250;
+      this.position -= 1;
+    }
   },
   
   addKeyListeners: function(p) {
     Q.input.on("right", this, "moveRight");
     Q.input.on("left", this, "moveLeft");
+    Q.input.on("up", this, "moveUp");
   },
 });
 
