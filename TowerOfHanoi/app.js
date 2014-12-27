@@ -16,6 +16,16 @@ Q.Sprite.extend("Ring", {
       this.p.x += 25;
     }
     
+    if (this.p.color === 'blue') {
+      this.p.w -= 100;
+      this.p.x += 50;
+    }
+    
+    if (this.p.color === 'green') {
+      this.p.w -= 150;
+      this.p.x += 75;
+    }
+    
     
     Q.input.on("up", this, "moveUp");
   },
@@ -61,6 +71,27 @@ Q.Sprite.extend("Ring", {
   },
 });
 
+Q.Sprite.extend("UnderHover", {
+  init: function(p) {
+    this._super(p, { x: 100, y: 50, w:100 * 2, h:20, color: "black"});
+    this.p.y += this.p.w + 50;
+    this.addKeyListeners();
+  },
+  
+  moveRight: function(p) {
+    this.p.x += 250;
+  },
+  
+  moveLeft: function(p) {
+    this.p.x -= 250;
+  },
+  
+  addKeyListeners: function(p) {
+    Q.input.on("right", this, "moveRight");
+    Q.input.on("left", this, "moveLeft");
+  },
+});
+
 Q.Sprite.extend("Peg", {
   init: function(p) {
     this._super(p, { x: 100, y: 50, w:100 * 2, h:20, color: "black"});
@@ -79,7 +110,9 @@ Q.scene("level1",function(stage) {
   stage.insert(new Q.Peg({x: 550}));
   stage.insert(new Q.Peg({x: 800}));
   
-  stage.insert(new Q.Ring({x: 300, color: 'red'}));
+  stage.insert(new Q.Ring({x: 300, color: 'green'}));
+  
+  stage.insert(new Q.UnderHover({x: 300, h: 5}));
 });
 
 
