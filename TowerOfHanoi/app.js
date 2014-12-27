@@ -16,7 +16,7 @@ Q.Sprite.extend("Ring", {
     
     if (this.p.color === 'red') {
       this.p.w -= 50;
-      this.p.x += 25;
+      this.p.x += 25
     }
     
     if (this.p.color === 'blue') {
@@ -81,8 +81,12 @@ Q.Sprite.extend("UnderHover", {
     if(activeRing === undefined) {
       return;
     }
-    activeRing.drop();
+    if(gameState[this.position].length > 0 && 
+       gameState[this.position][gameState[this.position].length - 1].p.w < activeRing.p.w) {
+      return;
+    }
     gameState[this.position][gameState[this.position].length] = activeRing;
+    activeRing.drop();
     activeRing = undefined;
   },
   
