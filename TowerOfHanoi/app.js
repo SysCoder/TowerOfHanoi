@@ -13,6 +13,7 @@ Q.Sprite.extend("Ring", {
     
     Q.input.on("up", this, "moveUp");
   },
+
   
   drop: function(p) {
     this.add('2d');
@@ -40,7 +41,11 @@ Q.Sprite.extend("Ring", {
   
   draw: function(ctx) {
      this._super(ctx);
-     
+     ctx.rect((this.p.h/2), this.p.w, this.p.h, this.p.w);
+     ctx.fillStyle = 'red';
+     ctx.fill();
+     ctx.fillStyle = 'black';
+    ctx.fill();
   },
   removeKeyListeners: function(p) {
     Q.input.off("down", this);
