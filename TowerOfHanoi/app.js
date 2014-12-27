@@ -13,15 +13,17 @@ Q.Sprite.extend("Ring", {
   
   drop: function(p) {
     this.add('2d');
-    
+    this.removeKeyListeners();
   },
   
   moveRight: function(p) {
     this.p.x += 250;
+    this.removeKeyListeners();
   },
   
   moveLeft: function(p) {
     this.p.x -= 250;
+    this.removeKeyListeners();
   },
   
   draw: function(ctx) {
