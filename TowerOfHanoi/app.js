@@ -4,6 +4,11 @@ var Q = Quintus()
         .include("Sprites, Scenes, Input, 2D, Touch, UI")
         .setup({ maximize: true })
         .controls().touch()
+
+var gameState = [];
+
+var activeRing;
+
 Q.Sprite.extend("Ring", {
   init: function(p) {
     this.onPeg = false;
@@ -26,6 +31,9 @@ Q.Sprite.extend("Ring", {
       this.p.x += 75;
     }
     
+    if (this.p.start === true) {
+      this.drop();
+    }
     
     Q.input.on("up", this, "moveUp");
   },
@@ -109,8 +117,13 @@ Q.scene("level1",function(stage) {
   stage.insert(new Q.Peg({x: 300}));
   stage.insert(new Q.Peg({x: 550}));
   stage.insert(new Q.Peg({x: 800}));
+  var startFirstPeg = [new Q.Ring({x: 300, y: 50, color: 'green', start: true}), new Q.Ring({x: 300, y: 100, color: 'blue', start: true}), new Q.Ring({x: 300, y: 150, color: 'red', start: true})]
   
-  stage.insert(new Q.Ring({x: 300, color: 'green'}));
+  gameState[0] = startFirstPeg;
+  
+  stage.insert(startFirstPeg[0]);
+  stage.insert(startFirstPeg[1]);
+  stage.insert(startFirstPeg[2]);
   
   stage.insert(new Q.UnderHover({x: 300, h: 5}));
 });
