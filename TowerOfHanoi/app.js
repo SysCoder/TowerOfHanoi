@@ -88,6 +88,10 @@ Q.Sprite.extend("UnderHover", {
     gameState[this.position][gameState[this.position].length] = activeRing;
     activeRing.drop();
     activeRing = undefined;
+    
+    if(gameState[2].length == 3) {
+      Q.stageScene("endGame", 2, { label: "You Did It!" });
+    }
   },
   
   moveRight: function(p) {
@@ -129,9 +133,23 @@ Q.Sprite.extend("Peg", {
   draw: function(ctx) {
      this._super(ctx);
      ctx.rect(-(this.p.h/2), -this.p.w, this.p.h, this.p.w);
-     ctx.fillStyle = 'black';
+     ctx.fillStyle = this.p.color;
      ctx.fill();
   }
+});
+
+Q.scene('endGame',function(stage) {
+  var box = stage.insert(new Q.UI.Container({
+    x: Q.width/2, y: Q.height/2, fill: "rgba(0,0,0,0.5)"
+  }));
+         
+  var label = box.insert(new Q.UI.Text({x:10, y: -10, 
+                                        label: stage.options.label }));
+  button.on("click",function() {
+
+  });
+  
+  box.fit(20);
 });
 
 Q.scene("level1",function(stage) {
@@ -152,5 +170,5 @@ Q.scene("level1",function(stage) {
 
 
 Q.load("sprites.png", function() {
-  Q.stageScene("level1");
+  Q.stageScene("level1", 1);
 });
