@@ -14,8 +14,6 @@ Q.Sprite.extend("Ring", {
     this.onPeg = false;
     this._super(p, { x: 100, y: 50, w:100 * 2, h:20, color: "black"});
     
-    this.addKeyListeners();
-    
     if (this.p.color === 'red') {
       this.p.w -= 50;
       this.p.x += 25;
@@ -34,15 +32,11 @@ Q.Sprite.extend("Ring", {
     if (this.p.start === true) {
       this.drop();
     }
-    
-    Q.input.on("up", this, "moveUp");
   },
 
   
   drop: function(p) {
     this.add('2d');
-    this.onPeg = true;
-    this.removeKeyListeners();
   },
   
   moveRight: function(p) {
@@ -55,27 +49,12 @@ Q.Sprite.extend("Ring", {
   
   // this activates the piece
   moveUp: function(p) {
-    if(this.onPeg !== true) {
-      return;
-    }
     this.del('2d');
     this.p.y = 50;
-    this.addKeyListeners();
   },
   
   draw: function(ctx) {
      this._super(ctx);
-  },
-  removeKeyListeners: function(p) {
-    Q.input.off("down", this);
-    Q.input.off("right", this);
-    Q.input.off("left", this);
-    
-  },
-  addKeyListeners: function(p) {
-    Q.input.on("down", this, "drop");
-    Q.input.on("right", this, "moveRight");
-    Q.input.on("left", this, "moveLeft");
   },
 });
 
@@ -92,23 +71,40 @@ Q.Sprite.extend("UnderHover", {
     if(activeRing !== undefined) {
       return;
     }
-    this.del('2d');
-    this.p.y = 50;
-    this.addKeyListeners();
+    activeRing = gameState[this.position][gameState[this.position].length - 1];
+    activeRing.moveUp();
+  },
+  
+  moveDown: function(p) {
+    // Alread holding a piece
+    if(activeRing === undefined) {
+      return;
+    }
+    activeRing.moveDown();
+    gameState[this.position][gameState[this.position].length] = activeRing;
+    activeRing = undefined;
   },
   
   moveRight: function(p) {
     if (this.position < 2) {
       this.p.x += 250;
       this.position += 1;
+      if(activeRing !== undefined) {
+        activeRing.moveRight();
+       }
     }
+
   },
   
   moveLeft: function(p) {
     if (this.position > 0) {
       this.p.x -= 250;
       this.position -= 1;
+      if(activeRing !== undefined) {
+        activeRing.moveLeft();
+      }
     }
+    
   },
   
   addKeyListeners: function(p) {
@@ -135,13 +131,14 @@ Q.scene("level1",function(stage) {
   stage.insert(new Q.Peg({x: 300}));
   stage.insert(new Q.Peg({x: 550}));
   stage.insert(new Q.Peg({x: 800}));
-  var startFirstPeg = [new Q.Ring({x: 300, y: 50, color: 'green', start: true}), new Q.Ring({x: 300, y: 100, color: 'blue', start: true}), new Q.Ring({x: 300, y: 150, color: 'red', start: true})]
+  var startFirstPeg = [new Q.Ring({x: 300, y: 150, color: 'red', start: true}), new Q.Ring({x: 300, y: 100, color: 'blue', start: true}),new Q.Ring({x: 300, y: 50, color: 'green', start: true})]
   
   gameState[0] = startFirstPeg;
   
-  stage.insert(startFirstPeg[0]);
-  stage.insert(startFirstPeg[1]);
+  
   stage.insert(startFirstPeg[2]);
+  stage.insert(startFirstPeg[1]);
+  stage.insert(startFirstPeg[0]);
   
   stage.insert(new Q.UnderHover({x: 300, h: 5}));
 });
