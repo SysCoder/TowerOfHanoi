@@ -18,12 +18,10 @@ Q.Sprite.extend("Ring", {
   
   moveRight: function(p) {
     this.p.x += 250;
-    this.removeKeyListeners();
   },
   
   moveLeft: function(p) {
     this.p.x -= 250;
-    this.removeKeyListeners();
   },
   
   draw: function(ctx) {
