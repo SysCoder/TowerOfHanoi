@@ -7,12 +7,37 @@ var Q = Quintus()
 Q.Sprite.extend("Ring", {
   init: function(p) {
     this._super(p, { x: 100, y: 50, w:100 * 2, h:20, color: "black"});
-    this.add('2d');
+    
+    this.addKeyListeners();
   },
+  
+  drop: function(p) {
+    this.add('2d');
+    
+  },
+  
+  moveRight: function(p) {
+    this.p.x += 250;
+  },
+  
+  moveLeft: function(p) {
+    this.p.x -= 250;
+  },
+  
   draw: function(ctx) {
      this._super(ctx);
      
-  }
+  },
+  removeKeyListeners: function(p) {
+    Q.input.off("down", this);
+    Q.input.off("right", this);
+    Q.input.off("left", this);
+  },
+  addKeyListeners: function(p) {
+    Q.input.on("down", this, "drop");
+    Q.input.on("right", this, "moveRight");
+    Q.input.on("left", this, "moveLeft");
+  },
 });
 
 Q.Sprite.extend("Peg", {
