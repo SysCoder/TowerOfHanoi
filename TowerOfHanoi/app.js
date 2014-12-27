@@ -11,6 +11,12 @@ Q.Sprite.extend("Ring", {
     
     this.addKeyListeners();
     
+    if (this.p.color === 'red') {
+      this.p.w -= 50;
+      this.p.x += 25;
+    }
+    
+    
     Q.input.on("up", this, "moveUp");
   },
 
@@ -41,11 +47,6 @@ Q.Sprite.extend("Ring", {
   
   draw: function(ctx) {
      this._super(ctx);
-     ctx.rect((this.p.h/2), this.p.w, this.p.h, this.p.w);
-     ctx.fillStyle = 'red';
-     ctx.fill();
-     ctx.fillStyle = 'black';
-    ctx.fill();
   },
   removeKeyListeners: function(p) {
     Q.input.off("down", this);
@@ -78,7 +79,7 @@ Q.scene("level1",function(stage) {
   stage.insert(new Q.Peg({x: 550}));
   stage.insert(new Q.Peg({x: 800}));
   
-  stage.insert(new Q.Ring({x: 300}));
+  stage.insert(new Q.Ring({x: 300, color: 'red'}));
 });
 
 
