@@ -6,13 +6,17 @@ var Q = Quintus()
         .controls().touch()
 Q.Sprite.extend("Ring", {
   init: function(p) {
+    this.onPeg = false;
     this._super(p, { x: 100, y: 50, w:100 * 2, h:20, color: "black"});
     
     this.addKeyListeners();
+    
+    Q.input.on("up", this, "moveUp");
   },
   
   drop: function(p) {
     this.add('2d');
+    this.onPeg = true;
     this.removeKeyListeners();
   },
   
@@ -24,6 +28,16 @@ Q.Sprite.extend("Ring", {
     this.p.x -= 250;
   },
   
+  // this activates the piece
+  moveUp: function(p) {
+    if(this.onPeg !== true) {
+      return;
+    }
+    this.del('2d');
+    this.p.y = 50;
+    this.addKeyListeners();
+  },
+  
   draw: function(ctx) {
      this._super(ctx);
      
@@ -32,6 +46,7 @@ Q.Sprite.extend("Ring", {
     Q.input.off("down", this);
     Q.input.off("right", this);
     Q.input.off("left", this);
+    
   },
   addKeyListeners: function(p) {
     Q.input.on("down", this, "drop");
