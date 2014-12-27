@@ -5,7 +5,7 @@ var Q = Quintus()
         .setup({ maximize: true })
         .controls().touch()
 
-var gameState = [];
+var gameState = [[],[],[]];
 
 var activeRing;
 
@@ -72,6 +72,7 @@ Q.Sprite.extend("UnderHover", {
       return;
     }
     activeRing = gameState[this.position][gameState[this.position].length - 1];
+    gameState[this.position].length = gameState[this.position].length - 1;
     activeRing.moveUp();
   },
   
@@ -80,7 +81,7 @@ Q.Sprite.extend("UnderHover", {
     if(activeRing === undefined) {
       return;
     }
-    activeRing.moveDown();
+    activeRing.drop();
     gameState[this.position][gameState[this.position].length] = activeRing;
     activeRing = undefined;
   },
@@ -111,6 +112,8 @@ Q.Sprite.extend("UnderHover", {
     Q.input.on("right", this, "moveRight");
     Q.input.on("left", this, "moveLeft");
     Q.input.on("up", this, "moveUp");
+    Q.input.on("down", this, "moveDown");
+    Q.input.on("fire", this, "moveDown");
   },
 });
 
