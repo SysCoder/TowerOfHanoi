@@ -96,9 +96,7 @@ Q.Sprite.extend("UnderHover", {
       return;
     }
     gameState[this.position][gameState[this.position].length] = activeRing;
-    solverState = adapterToSolver(gameState);
-    console.log(solverState);
-    console.log(getNextMove(solverState));
+    
     activeRing.drop();
     activeRing = undefined;
     
@@ -128,6 +126,24 @@ Q.Sprite.extend("UnderHover", {
       }
     }
     
+  },
+  
+  moveToPeg: function(peg) {
+    if (peg === 0) {
+      this.moveLeft();
+      this.moveLeft();
+    }
+    
+    if (peg === 2) {
+      this.moveRight();
+      this.moveRight();
+    }
+    
+    if (peg === 1) {
+      this.moveRight();
+      this.moveRight();
+      this.moveLeft();
+    }
   },
   
   addKeyListeners: function(p) {
@@ -180,10 +196,33 @@ Q.scene("level1",function(stage) {
   stage.insert(startFirstPeg[2]);
   stage.insert(startFirstPeg[1]);
   stage.insert(startFirstPeg[0]);
+  var hoverPiece = new Q.UnderHover({x: 300, h: 5});
+  stage.insert(new Q.UI.Button({
+      label: "Another Button",
+      y: 100,
+      x: 1000,
+      fill: "#990000",
+      border: 5,
+      shadow: 10,
+      shadowColor: "rgba(0,0,0,0.5)",
+    }, function() {
+      makeNextBestMove(gameState, hoverPiece);
+    }));
   
-  stage.insert(new Q.UnderHover({x: 300, h: 5}));
+  stage.insert(hoverPiece);
 });
 
+function makeNextBestMove(gameState, hoverPiece) {
+  console.log("Gamestate: " + gameState);
+  console.log("HoverPiece: " + hoverPiece);
+  var solverState = adapterToSolver(gameState);
+  console.log(solverState);
+  var nextMoveSolverState = getNextMove(solverState);
+    
+  console.log(nextMoveSolverState);
+  var moveTuple = getMoveTuple(solverState, nextMoveSolverState);
+  console.log(moveTuple);
+}
 
 Q.load("sprites.png", function() {
   Q.stageScene("level1", 1);
@@ -248,8 +287,6 @@ function getNextMove(position) {
     var possiblePositions = possibleMoves(position);
     var nextMovePosition = [];
     for (var i = 0;i < possiblePositions.length;i++) {
-      console.log("Possible position: " + possiblePositions[i].slice(1));
-      console.log("Position: " + position.slice(1));
       if (!eq(position.slice(1), possiblePositions[i].slice(1))) {
         nextMovePosition = possiblePositions[i];
         break;
@@ -330,8 +367,6 @@ function movesForRing(ringSize, gameState) {
     // Therefore we stop at ringSize.
     // gameState[i] == gameState[ringSize] checks if there is a ring is on top of the current ring.
     for(j = 0;j < ringSize;j++) {
-      console.log(gameState[j]);
-      console.log(gameState[ringSize]);
       if (gameState[j] === movesToTry[i] || gameState[j] === gameState[ringSize]) {
         continueToken = true;
         continue;
