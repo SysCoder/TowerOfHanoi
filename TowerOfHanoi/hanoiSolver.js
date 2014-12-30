@@ -10,19 +10,40 @@ CornerEnum = {
 
 //console.log(figureOutTriangle(0, 'a', true));
 
-printCurrentTriangle(['a', 'b', 'a']);
+//console.log(currentTriangle(['a', 'b', 'a']));
+console.log(getNextMove(['a', 'c', 'a']));
+
+
+
+function getNextMove(position) {
+  var triangle = currentTriangle(position);
+  var locationOnTriangle = triangle.indexOf(position[0]);
   
-function printCurrentTriangle(position) {
+  // Top
+  if (locationOnTriangle === 0  || locationOnTriangle === 1) {
+    return [triangle[2], position[1], position[2]];
+  } else if (locationOnTriangle === 2) {
+    var possiblePositions = possibleMoves(position);
+    var nextMovePosition = [];
+    for (var i = 0;i < possiblePositions.length;i++) {
+      console.log("Possible position: " + possiblePositions[i].slice(1));
+      console.log("Position: " + position.slice(1));
+      if (!eq(position.slice(1), possiblePositions[i].slice(1))) {
+        nextMovePosition = possiblePositions[i];
+        break;
+      }
+    }
+    return nextMovePosition;
+  }
+}
+  
+function currentTriangle(position) {
   var currentTriangle = PEGS.slice(0);
   var forwards = false;
   var corner = currentTriangle.indexOf(position[position.length - 1]);
   for(var i = position.length - 1;i >= 1;i--) {
     currentRing = position[i];
-    console.log("corner: " + corner);
-    console.log("position: " + position[i]);
-    console.log("forwards: " + forwards);
     currentTriangle = figureOutTriangle(corner, currentRing, forwards);
-    console.log("current triangle: " + currentTriangle);
     forwards = !forwards;
     corner = currentTriangle.indexOf(position[i - 1])
   }
@@ -31,18 +52,13 @@ function printCurrentTriangle(position) {
 
 function figureOutTriangle(corner, valueInCorner, forwards) {
   triangle = getTriangleThreeNodesValues(valueInCorner, forwards);
-  console.log(CornerEnum.RIGHT);
-  console.log(corner);
-  console.log("Unrotated triangle: " + triangle);
   if (corner === CornerEnum.RIGHT) {
-    console.log("Right corner");
     var firstElement = triangle[0];
     triangle.shift();
     triangle[triangle.length] = firstElement;
   }
   
   if (corner === CornerEnum.LEFT) {
-    console.log('Left corner');
     var lastElement = triangle[triangle.length - 1];
     triangle.length = triangle.length - 1;
     triangle.unshift(lastElement);
@@ -114,3 +130,5 @@ function otherValues(current) {
   var allValues = ['a', 'b', 'c'];
   return allValues.filter(function(element) { return element != current;});
 }
+
+function eq(a,b){return !(a<b || b<a);}
