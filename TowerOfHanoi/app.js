@@ -120,8 +120,10 @@ Q.Sprite.extend("UnderHover", {
     Q.input.on("right", this, "moveRight");
     Q.input.on("left", this, "moveLeft");
     Q.input.on("up", this, "moveUp");
+    Q.input.on("fire", this, "moveUp");
     Q.input.on("down", this, "moveDown");
-    Q.input.on("fire", this, "moveDown");
+    Q.input.on("action", this, "moveDown");
+    
   },
 });
 

@@ -1,0 +1,116 @@
+
+PEGS = ['a', 'b', 'c'];
+
+//console.log(possibleMoves(['a', 'c', 'a']))
+CornerEnum = {
+    TOP : 0,
+    LEFT : 1,
+    RIGHT : 2
+}
+
+//console.log(figureOutTriangle(0, 'a', true));
+
+printCurrentTriangle(['a', 'b', 'a']);
+  
+function printCurrentTriangle(position) {
+  var currentTriangle = PEGS.slice(0);
+  var forwards = false;
+  var corner = currentTriangle.indexOf(position[position.length - 1]);
+  for(var i = position.length - 1;i >= 1;i--) {
+    currentRing = position[i];
+    console.log("corner: " + corner);
+    console.log("position: " + position[i]);
+    console.log("forwards: " + forwards);
+    currentTriangle = figureOutTriangle(corner, currentRing, forwards);
+    console.log("current triangle: " + currentTriangle);
+    forwards = !forwards;
+    corner = currentTriangle.indexOf(position[i - 1])
+  }
+  return currentTriangle;
+}
+
+function figureOutTriangle(corner, valueInCorner, forwards) {
+  triangle = getTriangleThreeNodesValues(valueInCorner, forwards);
+  console.log(CornerEnum.RIGHT);
+  console.log(corner);
+  console.log("Unrotated triangle: " + triangle);
+  if (corner === CornerEnum.RIGHT) {
+    console.log("Right corner");
+    var firstElement = triangle[0];
+    triangle.shift();
+    triangle[triangle.length] = firstElement;
+  }
+  
+  if (corner === CornerEnum.LEFT) {
+    console.log('Left corner');
+    var lastElement = triangle[triangle.length - 1];
+    triangle.length = triangle.length - 1;
+    triangle.unshift(lastElement);
+  }
+  return triangle;
+}
+
+function getTriangleThreeNodesValues(valueInCorner, forwards) {
+  reVal = [];
+  indexInListOfPegs = PEGS.indexOf(valueInCorner);
+
+  for(var i = 0;i < PEGS.length;i++) {
+    reVal[reVal.length] = PEGS[(indexInListOfPegs + PEGS.length) % PEGS.length];
+    if (forwards) {
+      indexInListOfPegs++;
+    } else {
+      indexInListOfPegs--;
+    }
+    
+  }
+  return reVal;
+}
+
+function possibleMoves(gameState) {
+  positions = [];
+  for(var i = 0;i < gameState.length;i++) {
+    Array.prototype.push.apply(positions, movesForRing(i, gameState));
+  }
+  return positions;
+}
+
+function movesForRing(ringSize, gameState) {
+  var positions = [];
+  // rings are ordered by ring sizes in gameState.
+  // ring size 0 is at gameState[0].
+  // The value at gameState[x] is the location where the ring is located.
+  // moveToTry are the locations to try for the current ring.
+  var movesToTry = otherValues(gameState[ringSize]);
+  for(i = 0;i < movesToTry.length;i++) {
+    var continueToken = false;
+    // Check if the pieces an be move to movesToTry[i]
+    // by checking if a smaller ring is already at that location.
+    // If a smaller ring is at that location, then the current ring cannot go there.
+    // Look all the way up to the current ring size.
+    // No need to look further rings that is equal or greater than the ringSize
+    // because the current ring size can go on top larger.
+    // Therefore we stop at ringSize.
+    // gameState[i] == gameState[ringSize] checks if there is a ring is on top of the current ring.
+    for(j = 0;j < ringSize;j++) {
+      console.log(gameState[j]);
+      console.log(gameState[ringSize]);
+      if (gameState[j] === movesToTry[i] || gameState[j] === gameState[ringSize]) {
+        continueToken = true;
+        continue;
+      }
+      
+    }
+    if(continueToken) {
+      continue;
+    }
+    var newPosition = gameState.slice(0);
+    newPosition[ringSize] = movesToTry[i];
+    positions[positions.length] = newPosition;
+  }
+  return positions;
+}
+
+function otherValues(current) {
+  var allValues = ['a', 'b', 'c'];
+  return allValues.filter(function(element) { return element != current;});
+}
