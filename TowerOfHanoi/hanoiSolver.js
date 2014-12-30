@@ -15,6 +15,30 @@ console.log(getNextMove(['a', 'c', 'a']));
 
 
 
+function adapterToSolver(gameState) {
+  solverGameState = [];
+  
+  for(var i = 0;i < gameState.length;i++) {
+    for(var j = 0;j < gameState[0].length;j++) {
+      solverGameState[gameState[i][j]] = pegNumberToPegLetter(i);
+    }
+  }
+  return solverGameState;
+}
+
+function getMoveTuple(initialPosition, nextPosition) {
+  reVal = [];
+  
+  for(var i = 0;i < initialPosition.length;i++) {
+    if (initialPosition[i] !== nextPosition[i]) {
+      reVal[reVal.length] = pegLetterToPegNumber(initialPosition[i]);
+      reVal[reVal.length] = pegLetterToPegNumber(nextPosition[i]);
+      break;
+    }
+  }
+  return reVal;
+}
+
 function getNextMove(position) {
   var triangle = currentTriangle(position);
   var locationOnTriangle = triangle.indexOf(position[0]);
@@ -132,3 +156,6 @@ function otherValues(current) {
 }
 
 function eq(a,b){return !(a<b || b<a);}
+
+function pegLetterToPegNumber(peg) { return peg.charCodeAt(0) - 97;}
+function pegNumberToPegLetter(peg) { return String.fromCharCode(97 + peg);}
