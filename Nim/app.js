@@ -1,21 +1,36 @@
  
 
 var Q = Quintus()
-        .include("Sprites, Scenes, Input, 2D, Touch, UI")
-        .setup({ maximize: true })
-        .controls().touch()
+        .include("Sprites, Scenes, Input, 2D, Touch, UI");
 
-var gameState = [];
+Q.setup({ maximize: true })
+ //.controls()
+ .touch(Q.SPRITE_ALL);
 
+var gameState = [6, 8];
+
+var headsOfLines = [];
 
 Q.Sprite.extend("Ball",{
   init: function(p) {
     console.log('Ball init');
-    this._super(p, { sheet: "player", vy:0, x: 200 , y: 300, w: 40, h: 40, color: 'black', position: 0 });
+    this._super(p, { sheet: "player", shape: "ball", vy:0, x: 200 , y: 300, w: 40, h: 40, color: 'black', position: 0                      });
     
     
-    
+    this.on("touchEnd");
   },
+  cascadeDestroy: function() {
+    if (this.nextBall !== undefined) {
+      this.nextBall.cascadeDestroy();
+    }
+    this.destroy();
+  },
+  
+  touchEnd: function(touch) {
+    console.log("Touch End event called");
+    this.cascadeDestroy();
+  },
+  
   draw: function(ctx) {
     ctx.fillStyle = this.p.color;
     ctx.beginPath();
@@ -42,7 +57,22 @@ Q.scene('endGame',function(stage) {
 });
 
 Q.scene("level1",function(stage) {
-  stage.insert(new Q.Ball({x: 400, y: 200}));
+  var ball;
+  var previousBall;
+  for (var i = 0;i < gameState.length;i++)  {
+    for (var j = 0;j < gameState[i];j++) {
+      ball = new Q.Ball({x: 400 + 45 * j, y: 200 + 45 * i});
+      if (previousBall !== undefined) {
+        previousBall.nextBall = ball;
+      }
+      if (j === 0) {
+        headsOfLines[i] = ball;
+      }
+      previousBall = ball;
+      stage.insert(ball);
+    }
+    previousBall = undefined;
+  }
 });
 
 
