@@ -9,6 +9,8 @@ Q.setup({ maximize: true })
 
 var gameState = [6, 8];
 
+var playerOneTurn = true;
+
 var headsOfLines = [];
 
 Q.Sprite.extend("Ball",{
@@ -23,11 +25,15 @@ Q.Sprite.extend("Ball",{
     if (this.nextBall !== undefined) {
       this.nextBall.cascadeDestroy();
     }
+    
     this.destroy();
   },
   
   touchEnd: function(touch) {
     console.log("Touch End event called");
+    
+    playerOneTurn = !playerOneTurn;
+    Q.stageScene("playerTurnText", 0);
     this.cascadeDestroy();
   },
   
@@ -41,6 +47,22 @@ Q.Sprite.extend("Ball",{
   }
 });
 
+Q.scene('playerTurnText',function(stage) {
+  var box = stage.insert(new Q.UI.Container({
+    x: Q.width/2, y: 40, fill: "rgba(0,0,0,0.5)"
+  }));
+         
+  var text = "";
+  if (playerOneTurn) {
+    text = "Player One";
+  } else {
+    text = "Player Two";
+  }
+  
+  var label = box.insert(new Q.UI.Text({x:10, y: -10, 
+                                        label: text }));
+  box.fit(20);
+});
 
 Q.scene('endGame',function(stage) {
   var box = stage.insert(new Q.UI.Container({
@@ -79,6 +101,7 @@ Q.scene("level1",function(stage) {
 
 Q.load("sprites.png", function() {
   Q.stageScene("level1", 1);
+  Q.stageScene("playerTurnText", 0);
 });
 
 
