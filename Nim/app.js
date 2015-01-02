@@ -18,23 +18,37 @@ Q.Sprite.extend("Ball",{
     console.log('Ball init');
     this._super(p, { sheet: "player", shape: "ball", vy:0, x: 200 , y: 300, w: 40, h: 40, color: 'black', position: 0                      });
     
-    
+    this.removed = false;
     this.on("touchEnd");
   },
   cascadeDestroy: function() {
+    if (this.removed) {
+      return;
+    }
     if (this.nextBall !== undefined) {
       this.nextBall.cascadeDestroy();
     }
     
+    gameState[this.p.row] -= 1;
+    this.off("touchEnd");
+    this.removed = true;
     this.destroy();
+    
   },
   
   touchEnd: function(touch) {
     console.log("Touch End event called");
     
-    playerOneTurn = !playerOneTurn;
-    Q.stageScene("playerTurnText", 0);
+    
     this.cascadeDestroy();
+    console.log("Sum after removal: " + sumOfStones());
+    if(sumOfStones() === 0) {
+      Q.stageScene("endGame", 0);
+    } else {
+      playerOneTurn = !playerOneTurn;
+      Q.stageScene("playerTurnText", 0);
+    }
+    
   },
   
   draw: function(ctx) {
@@ -66,15 +80,18 @@ Q.scene('playerTurnText',function(stage) {
 
 Q.scene('endGame',function(stage) {
   var box = stage.insert(new Q.UI.Container({
-    x: Q.width/2, y: Q.height/2, fill: "rgba(0,0,0,0.5)"
+    x: Q.width/2, y: 100, fill: "rgba(0,0,0,0.5)"
   }));
          
-  var label = box.insert(new Q.UI.Text({x:10, y: -10, 
-                                        label: stage.options.label }));
-  button.on("click",function() {
-
-  });
+  var text = "";
+  if (playerOneTurn) {
+    text = "Player One";
+  } else {
+    text = "Player Two";
+  }
   
+  var label = box.insert(new Q.UI.Text({x:10, y: -10, 
+                                        label: text + " Wins!!" }));
   box.fit(20);
 });
 
@@ -83,7 +100,7 @@ Q.scene("level1",function(stage) {
   var previousBall;
   for (var i = 0;i < gameState.length;i++)  {
     for (var j = 0;j < gameState[i];j++) {
-      ball = new Q.Ball({x: 400 + 45 * j, y: 200 + 45 * i});
+      ball = new Q.Ball({x: 400 + 45 * j, y: 200 + 45 * i, row: i});
       if (previousBall !== undefined) {
         previousBall.nextBall = ball;
       }
@@ -97,7 +114,13 @@ Q.scene("level1",function(stage) {
   }
 });
 
-
+function sumOfStones() {
+  var sum = 0;
+  for (var i = 0;i < gameState.length;i++)  {
+    sum += gameState[i];
+  }
+  return sum;
+}
 
 Q.load("sprites.png", function() {
   Q.stageScene("level1", 1);
