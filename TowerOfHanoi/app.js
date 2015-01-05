@@ -100,7 +100,6 @@ Q.Sprite.extend("UnderHover", {
     activeRing.drop();
     activeRing = undefined;
     
-    
     if(gameState[2].length == 3) {
       Q.stageScene("endGame", 2, { label: "You Did It!" });
     }
