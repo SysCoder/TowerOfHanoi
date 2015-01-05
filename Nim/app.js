@@ -102,8 +102,7 @@ Q.scene('endGame',function(stage) {
 });
 
 Q.scene("level1",function(stage) {
-  var ball;
-  var previousBall;
+  var ball, previousBall;
   for (var i = 0;i < gameState.length;i++)  {
     for (var j = 0;j < gameState[i];j++) {
       ball = new Q.Ball({x: 400 + 45 * j, y: 200 + 45 * i, row: i});
