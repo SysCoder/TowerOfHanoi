@@ -16,11 +16,17 @@ var headsOfLines = [];
 Q.Sprite.extend("Ball",{
   init: function(p) {
     console.log('Ball init');
-    this._super(p, { sheet: "player", shape: "ball", vy:0, x: 200 , y: 300, w: 40, h: 40, color: 'black', position: 0                      });
-    
+    this._super(p, {
+      shape: "ball",
+      w: 40,
+      h: 40,
+      color: 'black',
+    });
+  
     this.removed = false;
     this.on("touchEnd");
   },
+  
   cascadeDestroy: function() {
     if (this.removed) {
       return;
