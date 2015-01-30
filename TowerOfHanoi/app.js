@@ -198,10 +198,10 @@ Q.scene("level1",function(stage) {
   stage.insert(startFirstPeg[0]);
   var hoverPiece = new Q.UnderHover({x: 300, h: 5});
   stage.insert(new Q.UI.Button({
-      label: "Another Button",
+      label: "Next Best Move",
       y: 100,
       x: 1000,
-      fill: "#990000",
+      fill: "#808080",
       border: 5,
       shadow: 10,
       shadowColor: "rgba(0,0,0,0.5)",
@@ -222,6 +222,10 @@ function makeNextBestMove(gameState, hoverPiece) {
   console.log(nextMoveSolverState);
   var moveTuple = getMoveTuple(solverState, nextMoveSolverState);
   console.log(moveTuple);
+  hoverPiece.moveToPeg(moveTuple[0]);
+  hoverPiece.moveUp();
+  hoverPiece.moveToPeg(moveTuple[1]);
+  hoverPiece.moveDown();
 }
 
 Q.load("sprites.png", function() {
